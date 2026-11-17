@@ -1,0 +1,32 @@
+name: Build Rubi firmware
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [rubi]
+
+permissions: read-all
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - name: Build rubi_wio_tracker_L1
+        uses: meshtastic/gh-action-firmware@main
+        with:
+          pio_platform: nrf52840
+          pio_env: rubi_wio_tracker_L1
+          pio_target: build
+
+      - name: Upload firmware
+        uses: actions/upload-artifact@v7
+        with:
+          name: rubi-firmware
+          path: |
+            release/*.uf2
+            release/*.zip
+            release/*.hex
